@@ -1,58 +1,64 @@
 run_analysis <- function () {
-# 1. Merges the training and the test sets to create one data set.
-
-	subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt")
-	subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt")
-	
-	y_train <- read.table("UCI HAR Dataset/train/y_train.txt")
-	y_test <- read.table("UCI HAR Dataset/test/y_test.txt")
-	
-	X_train <- read.table("UCI HAR Dataset/train/X_train.txt")
-	X_test <- read.table("UCI HAR Dataset/test/X_test.txt")
-	
-	subject_All <- rbind(subject_train,subject_test)
-	y_All <- rbind (y_train,y_test)
-	X_All <- rbind (X_train, X_test)
+# 1. Merge the training and the test sets to create one data set, following the steps below:
+#	1.1. Read into Zip file, then unzip the zip file 
+	download.file("http://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip ","Dataset.zip", mode="wb")
+	unzip ("./Dataset.zip")
+#	1.2. Read Subject datasets for both Training and Test
+	Subject_train <- read.table("UCI HAR Dataset/train/subject_train.txt")
+	Subject_test <- read.table("UCI HAR Dataset/test/subject_test.txt")
+#	1.3. Read Activity datasets for both Training and Test
+	Activity_train <- read.table("UCI HAR Dataset/train/y_train.txt")
+	Activity_test <- read.table("UCI HAR Dataset/test/y_test.txt")
+#	1.4. Read Measurements datasets for both Training and Test	
+	Measurements_train <- read.table("UCI HAR Dataset/train/X_train.txt")
+	Measurements_test <- read.table("UCI HAR Dataset/test/X_test.txt")
+#	1.5. Merge all Training and Test datasets 	
+	Subject_all <- rbind(Subject_train,Subject_test)
+	Activity_all <- rbind (Activity_train,Activity_test)
+	Measurements_all <- rbind (Measurements_train, Measurements_test)
 	
 # 2. Extracts only the measurements on the mean and standard deviation for each measurement.	
-	
-	features <- read.table ("UCI HAR Dataset/features.txt")
-	feature_filter <- grepl("(-std\\(\\)|-mean\\(\\))",features$V2)
-	
-	X_All_selected <- X_All[, which(feature_filter == TRUE)]
+#	2.1. Read Measurement names	and using filter by mean and standard deviation.
+	Measurement_names <- read.table ("UCI HAR Dataset/features.txt")
+	Measurement_filter <- grepl("(-std\\(\\)|-mean\\(\\))",Measurement_names$V2)
+#	2.1. Apply filter to Measurements datasets
+	Measurements_all_selected <- Measurements_all[, which(Measurement_filter == TRUE)]
 	
 # 3. Uses descriptive activity names to name the activities in the data set
-	
-	features_selected <- (cbind(features,feature_filter)[feature_filter==TRUE,])$V2
-	names(X_All_selected) <- features_selected
-	
+#	3.1. Read Activity labels 
+	Activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt")
+#	3.2. Replace activity labels in Activity datasets
+	Activity <- as.factor(Activity_all$V1)
+	levels(Activity) <- Activity_labels$V2
+
 # 4. Appropriately labels the data set with descriptive variable names. 
-	
-	features_selected <- sapply(features_selected,function(featurename) {gsub("(\\(|\\)|\\-)","",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("mean",".Mean.",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("std",".Standard.Deviation.",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("Acc",".Acceleration",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("GyroJerk","Angular.Acceleration",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("Gyro","Angular.Speed",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("Mag","Magnitude",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("^t","Time.Domain.",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("^f","Frequency.Domain.",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("Freq\\.","Frequency.",featurename)})
-	features_selected <- sapply(features_selected,function(featurename) {gsub("Freq$","Frequency.",featurename)})
-	
-	names(X_All_selected) <- features_selected
-	activity_labels <- read.table("UCI HAR Dataset/activity_labels.txt")
-	activity <- as.factor(y_All$V1)
-	levels(activity) <- activity_labels$V2
-	subject <- as.factor(subject_All$V1)
-	data_All <- cbind(subject,activity,X_All_selected)
+#	4.1. Replace variable names with Measurements names
+	Measurement_names <- (cbind(Measurement_names,Measurement_filter)[Measurement_filter==TRUE,])$V2
+#	4.2. Clean up Measurements names, replacing abbreviations with more descriptive labels	
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("(\\(|\\)|\\-)","",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("mean",".Mean.",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("std",".Standard.Deviation.",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("Acc",".Acceleration",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("GyroJerk","Angular.Acceleration",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("Gyro","Angular.Speed",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("Mag","Magnitude",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("^t","Time.Domain.",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("^f","Frequency.Domain.",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("Freq\\.","Frequency.",t)})
+	Measurement_names <- sapply(Measurement_names,function(t) {gsub("Freq$","Frequency.",t)})
+	names(Measurements_all_selected) <- Measurement_names
+#	4.3. Coerce Subject dataset to factor prior to binding along with the other datasets (Activity, Measurements)
+	Subject <- as.factor(Subject_all$V1)
+#	4.4. Bind all datasets into one data set	
+	Data_all <- cbind(Subject,Activity,Measurements_all_selected)
 	
 # 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-	
+#	5.1. Use Reshape2 functions (molten, dcast) to regroup dataset and calculate the average per Subject and Activity 
 	library(reshape2)
-	molten <- melt(data_All,id.vars=c("subject","activity"))
-	data_All2 <- dcast(molten,subject + activity ~ variable,mean)
-	write.table(data_All2,"tidyData.txt",row.names = FALSE)
+	molten <- melt(Data_all,id.vars=c("Subject","Activity"))
+	Data_all2 <- dcast(molten,Subject + Activity ~ variable,mean)
+#	5.2. Create tidy data
+	write.table(Data_all2,"TidyData.txt",row.names = FALSE)
 }
 
 
