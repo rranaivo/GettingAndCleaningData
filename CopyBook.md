@@ -23,7 +23,7 @@ The dataset includes the following files:
 * 'train/subject_train.txt': Each row identifies the subject who performed the training activity. 
 * 'test/subject_test.txt': Each row identifies the subject who performed the test activity. 
  
-# List of variables in the output tidy data
+## List of variables in the output tidy data "tidyData.txt"
  It is a data.frame comprised of 180 observations of the following 68 variables:
 * Subject                                                                   : int 
 * Activity                                                                  : Factor 

@@ -58,7 +58,7 @@ run_analysis <- function () {
 	molten <- melt(Data_all,id.vars=c("Subject","Activity"))
 	Data_all2 <- dcast(molten,Subject + Activity ~ variable,mean)
 #	5.2. Create tidy data
-	write.table(Data_all2,"TidyData.txt",row.names = FALSE)
+	write.table(Data_all2,"tidyData.txt",row.names = FALSE)
 }
 
 
