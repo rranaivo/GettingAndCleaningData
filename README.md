@@ -9,9 +9,9 @@ R script called run_analysis.R does the following
 4. Appropriately labels the data set with descriptive variable names. 
 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-After running the R script run_analysis, the final result Tidy Data ("tidyData.txt") can be read using the function read.table ("tidyData.txt", header=TRUE).
+After running the R script run_analysis, the output Tidy Data ("tidyData.txt") can be read using the function read.table ("tidyData.txt", header=TRUE).
 
-Below the detailed steps of the R script run_analysis:
+See below the detailed steps of the R script run_analysis:
 
 ## 1. Merge the training and the test sets to create one data set, following the steps below:
 	1.1. Extract the Zip file into local disk folder "Dataset.zip", then unzip the zip file 
@@ -21,7 +21,7 @@ Below the detailed steps of the R script run_analysis:
 	1.5. Merge all Training and Test respective datasets (Subject, Activity and Measurements)
 	
 ## 2. Extracts only the measurements on the mean and standard deviation for each measurement.	
-	2.1. Read Measurement names	from "UCI HAR Dataset/features.txt" and use the function grepl to filter them by mean and standard deviation.
+	2.1. Read Measurement names	from "UCI HAR Dataset/features.txt" and use the function "grepl" to filter them by mean and standard deviation.
 	2.1. Apply filter to Measurements datasets
 
 ## 3. Uses descriptive activity names to name the activities in the data set
@@ -30,7 +30,7 @@ Below the detailed steps of the R script run_analysis:
 
 ## 4. Appropriately labels the data set with descriptive variable names. 
 	4.1. Apply above filter to Measurement names 
-	4.2. Clean up Measurements names, replacing abbreviations with more descriptive labels	
+	4.2. Clean up Measurements names, replacing abbreviations with more descriptive labels:	
 	* removing "(\\", "\\)", "\\-)"
 	* replacing "mean" with ".Mean."
 	* replacing"std" with ".Standard.Deviation."
@@ -46,5 +46,5 @@ Below the detailed steps of the R script run_analysis:
 	4.4. Bind all datasets into one single data set	
 	
 ## 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
-	5.1. Use Reshape2 functions (molten, dcast) to regroup dataset and calculate average per Subject and Activity 
-	5.2. Create tidy data ("tidyData.txt") using write.table with row.names = FALSE
+	5.1. Use "Reshape2" functions (molten, dcast) to regroup dataset and calculate average per Subject and Activity 
+	5.2. Create tidy data ("tidyData.txt") using "write.table" with "row.names = FALSE"
